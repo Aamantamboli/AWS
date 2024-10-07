@@ -32,7 +32,7 @@ Amazon Web Services (AWS) is a comprehensive and widely adopted cloud computing 
 
    - **Purpose:** Enables you to launch AWS resources in a virtual network that you define.
    - **Details:** VPC allows for the creation of isolated networks within the AWS cloud. You can define IP address ranges, subnets, route tables, and security settings to control network access. 
-7.  **AWS Lambda**
+7.  **Amazon Lambda**
 
      <img src=https://github.com/user-attachments/assets/c9f82c86-f198-4acf-bf9e-a48b9a7ab12b width=230px height=250px>
 
@@ -56,13 +56,13 @@ Amazon Web Services (AWS) is a comprehensive and widely adopted cloud computing 
     
   - **Purpose:** Block storage service for use with EC2 instances.
   - **Details:** EBS provides persistent block storage that can be attached to EC2 instances. It offers options for snapshots, encryption, and scaling to meet the needs of various applications.
-11. **AWS IAM (Identity and Access Management)**
+11. **Amazon IAM (Identity and Access Management)**
 
     <img src=https://github.com/user-attachments/assets/d80f249e-c662-4a65-b0c5-9d2e4069b3ed width=150px height=200px>
     
   - **Purpose:** Manages access to AWS services and resources securely.
   - **Details:** IAM allows you to create and manage AWS users and groups, set permissions, and implement policies to control access to resources, ensuring secure operation of your AWS environment.
-12. **AWS KMS (Key Management Service)**
+12. **Amazon KMS (Key Management Service)**
 
     ![image](https://github.com/user-attachments/assets/c4e2d4ed-79fe-4562-8ca2-47c85af90450)
     
