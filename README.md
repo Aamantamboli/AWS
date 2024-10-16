@@ -1,6 +1,7 @@
 # <div align="center"> AWS (Amazon Web Services)</div>
-
-![2](https://github.com/user-attachments/assets/5dfb0b7e-7911-4856-b1de-acd9e155db7f)
+<p align="center">
+ <img src="https://github.com/user-attachments/assets/5dfb0b7e-7911-4856-b1de-acd9e155db7f" widht="200" height="180"/>
+</p>
 
 # What is AWS?
 AWS, or Amazon Web Services, is a comprehensive cloud computing platform provided by Amazon. It offers a wide range of services that enable businesses, developers, and individuals to access and manage computing resources over the internet. Here are some key aspects of AWS:
