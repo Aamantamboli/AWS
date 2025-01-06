@@ -1,70 +1,181 @@
-<h1>Natting</h1>
-<h3>Step 1: Create a VPC</h3>        
+# Natting in AWS
 
-![image](https://github.com/user-attachments/assets/ef8820d6-0b6e-4c2d-98d8-6758d0c418e0)
+This guide will walk you through the process of configuring NATting in AWS to provide internet access to instances in a private subnet while keeping them isolated from direct inbound internet traffic.
 
-<h3>Step 2: Create two Subnet public and private</h3>
+## Prerequisites
 
-![image](https://github.com/user-attachments/assets/9ae3fb3c-bbb2-4290-8910-7f960d8dcb0d)
+- AWS Account
+- Basic knowledge of AWS services (VPC, Subnet, EC2)
+- A working VPC configuration
 
-![image](https://github.com/user-attachments/assets/3bbe5b1d-547c-4374-a2f8-7f2ad69974e5)
+---
 
-![image](https://github.com/user-attachments/assets/f7f73ddd-6e6d-46dd-a849-257352d2d4be)
+## Step 1: Create a VPC
 
-<h3>Step 3: .Create Internet Gateway and attach  to VPC and select your VPC </h3>
+1. **Login** to the AWS Management Console and navigate to the **VPC Dashboard**.
+2. Create a new **VPC**. This will serve as the network environment for your instances.
 
-![image](https://github.com/user-attachments/assets/e94d4e0a-df65-49b3-be75-a9153c3228bf)
+ ![image](https://github.com/user-attachments/assets/462e215e-48d3-4491-946a-53c23e728aa6)
 
-<h3>Step 4: Create Nat Gateway and select public subnet and allocate elastic IP</h3>
+---
 
-![image](https://github.com/user-attachments/assets/f3c99e1c-e521-40c5-a58b-188fdab7bcd7)
+## Step 2: Create Two Subnets (Public and Private)
 
-<h3>Step 5: Create a route table for public </h3>
+1. Create two subnets:
+   - A **public subnet** for the instances that will have direct access to the internet.
+   - A **private subnet** for the instances that will not have direct access to the internet but can access the internet through NAT.
 
-![image](https://github.com/user-attachments/assets/a24f7b42-a134-48fb-a7c4-b5653ecd75d8)
+   **Public Subnet**:<br>
+  ![image](https://github.com/user-attachments/assets/2aa555d6-a05a-4be2-a7fe-6f803855a5d9)
 
-<h3>Step 6: Edit route table and add internet gateway in it </h3>
+   **Private Subnet**:<br>
+  ![image](https://github.com/user-attachments/assets/1994c370-1ef4-4195-899e-ff21c6f942b6)
 
-![image](https://github.com/user-attachments/assets/10946d0e-d55e-4b36-8cdb-8c99c1ccbe71)
+   **Subnet Configuration**:
+   - Ensure each subnet is associated with the correct route table (public or private).
 
-<h3>Step 7: Edit subnet associations and select public subnet </h3>
+---
 
-![image](https://github.com/user-attachments/assets/799f3cd5-d415-4d20-8309-b4c116e1be64)
+## Step 3: Create an Internet Gateway and Attach It to the VPC
 
-<h3>Step 8: Create route table for private </h3>
+1. Go to the **Internet Gateways** section in the VPC dashboard.
+2. Create a new **Internet Gateway** and attach it to the VPC.
 
-![image](https://github.com/user-attachments/assets/bc2380dd-3437-4c14-ab8c-0215fe610f5d)
+![image](https://github.com/user-attachments/assets/bbe340a9-ccbb-4288-a9c9-609bd82c1d3b)
 
-<h3>Step 9: Edit route table and add Nat gateway in it</h3>
+---
 
-![image](https://github.com/user-attachments/assets/47757377-42dc-400c-a674-2619d14b1d82)
+## Step 4: Create a NAT Gateway and Allocate Elastic IP
 
-<h3>Step 10: Edit subnet associations and select private subnet</h3>
+1. Navigate to the **NAT Gateways** section and create a new **NAT Gateway**.
+2. Select the **public subnet** and allocate an **Elastic IP** for the NAT Gateway.
 
-![image](https://github.com/user-attachments/assets/c95ec220-a5c3-41a1-8b21-758cf92f221f)
+![image](https://github.com/user-attachments/assets/21129122-6c96-425c-a82f-4b15ec71f164)
 
-<h3>Step 11: Launch public EC2 instance go to network setting select VPC which we created and select public subnet and auto assign public IP enable </h3>
+---
 
-![image](https://github.com/user-attachments/assets/e6d96cb0-5702-4a35-acd1-1bea6f1c4cca)
+## Step 5: Create a Route Table for the Public Subnet
 
-<h3>Step 12: Launch private EC2 instance go to network setting select VPC which we created and select private subnet and auto assign public IP disable </h3>
+1. Go to the **Route Tables** section in your VPC dashboard.
+2. Create a new **route table** for the **public subnet**.
+   
+![image](https://github.com/user-attachments/assets/06257200-3f6c-4c3b-8ba5-545ed1b95175)
 
-![image](https://github.com/user-attachments/assets/0099b897-a8e2-4ea2-8287-050d8ea8435a)
+---
 
-<h3>Step 13: Copy public IP and paste in mobaxterm and select your key</h3>
+## Step 6: Edit the Route Table and Add the Internet Gateway
 
-![image](https://github.com/user-attachments/assets/b39b558a-22b9-4ac2-93c2-93f2e16673c1)
+1. Edit the route table for the public subnet.
+2. Add a route that directs all outbound traffic (0.0.0.0/0) to the **Internet Gateway**.
 
-<h3>Step 14: Upload your key</h3>
+![image](https://github.com/user-attachments/assets/ec1ca5f5-2669-448f-ba19-9912b9aa1632)
 
-![image](https://github.com/user-attachments/assets/bbf73dfd-6cc0-4636-aa85-70835ac36fbe)
+---
 
-<h3>Step 15: Change permission of file to 400 and by ssh connection paste private IP of private instance</h3>
+## Step 7: Edit Subnet Associations and Select the Public Subnet
 
-![image](https://github.com/user-attachments/assets/5ee93db1-89fc-4cfc-bd58-fd796c1f0f65)
+1. Associate the **public subnet** with the newly created route table to ensure proper routing of internet-bound traffic.
 
-<h3>Step 16: Successfully login into private instance and give internet access to it </h3>
+![image](https://github.com/user-attachments/assets/bae85b75-490c-44e1-8c3f-b19dd063490e)
 
-![image](https://github.com/user-attachments/assets/5e948089-f494-4ffc-9c71-e8ae5daec6ff)
+---
 
-**Must have (SSH,HTTP,HTTPS,TCP) port in security group**
+## Step 8: Create a Route Table for the Private Subnet
+
+1. Create a new **route table** for the **private subnet**.
+
+![image](https://github.com/user-attachments/assets/66e93428-67da-43d0-90a7-ebdc71b849ad)
+
+---
+
+## Step 9: Edit the Route Table and Add the NAT Gateway
+
+1. Edit the route table for the private subnet.
+2. Add a route that directs outbound traffic (0.0.0.0/0) to the **NAT Gateway**.
+
+![image](https://github.com/user-attachments/assets/3476e87d-a05e-457e-b6b3-7806fef6a85c)
+
+---
+
+## Step 10: Edit Subnet Associations and Select the Private Subnet
+
+1. Associate the **private subnet** with the newly created route table to enable NAT-based internet access.
+
+![image](https://github.com/user-attachments/assets/237c57a9-abd8-4298-adb5-4bd412de61ff)
+
+---
+
+## Step 11: Launch a Public EC2 Instance
+
+1. Launch a new **public EC2 instance**.
+2. In the **network settings**, select the **VPC** you created and choose the **public subnet**.
+3. Enable **auto-assign public IP** to make the instance publicly accessible.
+
+![image](https://github.com/user-attachments/assets/1ad2c7d4-babd-4994-9e49-b3dea1efa248)
+
+---
+
+## Step 12: Launch a Private EC2 Instance
+
+1. Launch a new **private EC2 instance**.
+2. In the **network settings**, select the **VPC** you created and choose the **private subnet**.
+3. Disable **auto-assign public IP** as this instance will not have direct internet access.
+
+ ![image](https://github.com/user-attachments/assets/cf56f0b6-aa45-4818-bfc7-6618867a9f8d)
+
+---
+
+## Step 13: Connect to the Public EC2 Instance
+
+1. Copy the **public IP** of your public EC2 instance.
+2. Open **MobaXterm** (or your preferred SSH client) and paste the **public IP**.
+3. Select your **key pair** to connect via SSH.
+
+![image](https://github.com/user-attachments/assets/13af8a4c-cf1e-4b8c-998f-e7d22e1fb531)
+
+---
+
+## Step 14: Upload Your Key
+
+1. Make sure the **key file** is available for use when connecting to the instance.
+
+![image](https://github.com/user-attachments/assets/353331a0-19ad-4b15-b926-5cdcb870735b)
+
+---
+
+## Step 15: Change Permission of the Private Key File
+
+1. Change the permission of the key file to `400` for security reasons.
+
+![image](https://github.com/user-attachments/assets/25145b5a-8210-442c-b4c0-8af7b11fad7d)
+
+---
+
+## Step 16: Connect to the Private Instance
+
+1. Once connected to the public instance, use SSH to connect to the private instance by pasting the **private IP** of the private EC2 instance.
+   
+![image](https://github.com/user-attachments/assets/c4a99f81-9287-4dfb-a9ce-a3741be841b7)
+
+---
+
+## Security Group Settings
+
+- Ensure that the following ports are open in the **Security Group** for both instances:
+  - **SSH (port 22)**
+  - **HTTP (port 80)**
+  - **HTTPS (port 443)**
+  - **TCP (port 3000 or any other required ports)**
+
+---
+
+## Conclusion
+
+You have successfully configured NATting in AWS to provide internet access to your private subnet while maintaining security. The public subnet can access the internet directly, and the private subnet can access the internet through the NAT Gateway.
+
+---
+
+### References
+- [AWS VPC Documentation](https://docs.aws.amazon.com/vpc/latest/userguide/)
+- [AWS EC2 Documentation](https://docs.aws.amazon.com/ec2/)
+```
