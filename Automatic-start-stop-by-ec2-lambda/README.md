@@ -1,98 +1,163 @@
-<h1>STOPPED AND START INSTANCE THROUGH LAMBDA FUNCTION</h1>
-<h3>Step 1: Create policy</h3>
+# Stop and Start EC2 Instance Using Lambda Function
 
-![image](https://github.com/user-attachments/assets/6c65f09f-f234-474c-95f3-46c69d36059d)
+This guide explains how to stop and start an EC2 instance automatically using AWS Lambda functions and Amazon EventBridge rules. We will create Lambda functions to control EC2 instances and use EventBridge to schedule these functions.
 
-<h3>Step 2: Paste JSON code</h3>
+## Prerequisites
 
-![image](https://github.com/user-attachments/assets/c782ff3a-322d-402f-ac14-885eb5eb0180)
+- An AWS account
+- Basic knowledge of AWS Lambda, IAM, EC2, and EventBridge
+- An EC2 instance running
 
-<h3>Step 3: Give policy name</h3>
+---
 
-![image](https://github.com/user-attachments/assets/53cf94c9-e9b5-4510-97f7-291498ba2280)
+## Step 1: Create IAM Policy for Lambda to Access EC2
 
-<h3>Step 4: Create role</h3>
+1. **Navigate to IAM > Policies** in the AWS Management Console.
+2. Click **Create Policy**.
+3. Choose the **JSON** tab and paste the following policy to allow stopping and starting EC2 instances:
 
-![image](https://github.com/user-attachments/assets/e5e3862b-9b22-41c8-a1d4-5c980ac3fc7f)
+   ```json
+   {
+       "Version": "2012-10-17",
+       "Statement": [
+           {
+               "Effect": "Allow",
+               "Action": [
+                   "ec2:StartInstances",
+                   "ec2:StopInstances"
+               ],
+               "Resource": "*"
+           }
+       ]
+   }
+   ```
 
-<h3>Step 5: Select lambda</h3>
+4. Click **Review Policy**.
+5. Name the policy (e.g., `EC2-Stop-Start-Policy`) and click **Create Policy**.
 
-![image](https://github.com/user-attachments/assets/dc0e1322-88f1-4c24-8de9-2b549a12112d)
+---
 
-<h3>Step 6: Select our policy</h3>
+## Step 2: Create IAM Role for Lambda
 
-![image](https://github.com/user-attachments/assets/c3485fba-78d8-4ff0-8f4d-6e15de838cfd)
+1. Go to **IAM > Roles** and click **Create Role**.
+2. Select **Lambda** as the trusted entity.
+3. Attach the policy you created earlier (`EC2-Stop-Start-Policy`).
+4. Name the role (e.g., `Lambda-EC2-Role`) and click **Create Role**.
 
-<h3>Step 7: Give the role name and create role</h3>
+---
 
-![image](https://github.com/user-attachments/assets/6b815adf-9e9d-4a7a-8ea7-97d3dbcaa22c)
+## Step 3: Create EC2 Instance
 
-<h3>Step 8: Create Instance</h3>
+1. Navigate to the **EC2 Dashboard**.
+2. Launch a new EC2 instance or use an existing one that you want to stop and start using Lambda.
 
-![image](https://github.com/user-attachments/assets/93af97e3-12c6-4e89-8a1a-0cb6170c7859)
+---
 
-<h3>Step 9: Create a lambda function to stop instance</h3>
+## Step 4: Create Lambda Function to Stop EC2 Instance
 
-![image](https://github.com/user-attachments/assets/f17500d7-d027-4148-9f24-cff6c5d38881)
+1. Go to the **Lambda Console** and click **Create Function**.
+2. Choose **Author from scratch** and name the function (e.g., `Stop-EC2-Instance`).
+3. Choose **Python 3.x** as the runtime.
+4. Select the **Execution role** as the role created earlier (`Lambda-EC2-Role`).
+5. In the function code, paste the following Python code to stop the EC2 instance:
 
-<h3>Step 10: Use an existing role which we created </h3>
+   ```python
+   import boto3
 
-![image](https://github.com/user-attachments/assets/0573ce12-86a8-45a7-b063-f39f1f82223d)
+   ec2 = boto3.client('ec2')
 
-<h3>Step 11: Test it and Deploy stop instance code in lambda function</h3>
+   def lambda_handler(event, context):
+       response = ec2.stop_instances(
+           InstanceIds=['i-xxxxxxxxxxxxxxxxx']  # Replace with your instance ID
+       )
+       return response
+   ```
 
-![image](https://github.com/user-attachments/assets/e06fac63-18d8-46dd-8949-c20849caafdd)
+6. Click **Deploy** to save and deploy the function.
 
-<h3>Step 12: Make sure to configure time as per code </h3>
+---
 
-![image](https://github.com/user-attachments/assets/2c19f4cb-ec99-444f-bb75-30d4d834b1b3)
+## Step 5: Test the Lambda Function to Stop EC2 Instance
 
-<h3>Step 13: Create amazon event bridge rule</h3>
+1. In the Lambda function dashboard, click on **Test**.
+2. Create a test event with the default settings and click **Test**.
+3. Verify that the EC2 instance stops successfully.
 
-![image](https://github.com/user-attachments/assets/89210711-1c6f-4aaf-a92b-268a772bd610)
+---
 
-<h3>Step 14: </h3>
+## Step 6: Create EventBridge Rule to Trigger Lambda Function
 
-![image](https://github.com/user-attachments/assets/85728571-3249-41b8-82ee-4ab19690c355)
+1. Go to **Amazon EventBridge > Rules** and click **Create Rule**.
+2. Set a **Cron expression** for the schedule (e.g., stop the instance at 10:00 PM UTC every day: `cron(0 22 * * ? *)`).
+3. Set the **Target** as the Lambda function you created (`Stop-EC2-Instance`).
+4. Click **Create Rule**.
 
-<h3>Step 15: Give target to rule and create rule</h3>
+---
 
-![image](https://github.com/user-attachments/assets/81c7dd87-7fc5-4867-8ac9-327cc5eb74b3)
+## Step 7: Verify Instance Stopped at Scheduled Time
 
-<h3>Step 16: Successfully stopped instance at your time </h3>
+The EC2 instance should stop at the scheduled time as defined in the EventBridge rule. You can verify this by checking the EC2 console or the instance state.
 
-![image](https://github.com/user-attachments/assets/743d2b08-cbed-47a9-b4ef-3e9432401606)
+---
 
-<h3>Step 17: Create a lambda function to start instance</h3>
+## Step 8: Create Lambda Function to Start EC2 Instance
 
-![image](https://github.com/user-attachments/assets/ba935308-7d65-43d6-a25d-39cfb794fa2d)
+1. Go to the **Lambda Console** and click **Create Function**.
+2. Choose **Author from scratch** and name the function (e.g., `Start-EC2-Instance`).
+3. Choose **Python 3.x** as the runtime.
+4. Select the **Execution role** as the role created earlier (`Lambda-EC2-Role`).
+5. In the function code, paste the following Python code to start the EC2 instance:
 
-<h3>Step 18: Use an existing role which we created </h3>
+   ```python
+   import boto3
 
-![image](https://github.com/user-attachments/assets/37d5402c-66e6-4b54-9d5b-5283d2c4dd45)
+   ec2 = boto3.client('ec2')
 
-<h3>Step 19: Test it and Deploy code in lambda function</h3>
+   def lambda_handler(event, context):
+       response = ec2.start_instances(
+           InstanceIds=['i-xxxxxxxxxxxxxxxxx']  # Replace with your instance ID
+       )
+       return response
+   ```
 
-![image](https://github.com/user-attachments/assets/41275ce2-10b4-4853-aa7f-4329725de764)
+6. Click **Deploy** to save and deploy the function.
 
-<h3>Step 20: Make sure to configure time as per code </h3>
+---
 
-![image](https://github.com/user-attachments/assets/ea6da827-8137-43e1-86db-ab0d936b1495)
+## Step 9: Test the Lambda Function to Start EC2 Instance
 
-<h3>Step 21: Create amazon event bridge rule</h3>
+1. In the Lambda function dashboard, click on **Test**.
+2. Create a test event with the default settings and click **Test**.
+3. Verify that the EC2 instance starts successfully.
 
-![image](https://github.com/user-attachments/assets/86e7b54f-737c-4387-84ba-3ec5ddc7de1e)
+---
 
-<h3>Step 22: Give cron when you have to start instance</h3>
+## Step 10: Create EventBridge Rule to Start EC2 Instance
 
-![image](https://github.com/user-attachments/assets/68c727c0-3200-4005-8139-f737d159833c)
+1. Go to **Amazon EventBridge > Rules** and click **Create Rule**.
+2. Set a **Cron expression** for the schedule (e.g., start the instance at 7:00 AM UTC every day: `cron(0 7 * * ? *)`).
+3. Set the **Target** as the Lambda function you created (`Start-EC2-Instance`).
+4. Click **Create Rule**.
 
-<h3>Step 23: Give target to rule and create rule</h3>
+---
 
-![image](https://github.com/user-attachments/assets/f8b96910-d1ad-41fc-a538-ff80cea2c89b)
+## Step 11: Verify Instance Started at Scheduled Time
 
-<h3>Step 24: Successfully start instance at your time </h3>
+The EC2 instance should start at the scheduled time as defined in the EventBridge rule. You can verify this by checking the EC2 console or the instance state.
 
-![image](https://github.com/user-attachments/assets/eada9781-d977-48bc-a2ff-bba3f93fa6e0)
+---
 
+## Conclusion
 
+You have successfully set up an automation system using AWS Lambda and EventBridge to stop and start EC2 instances at scheduled times. The Lambda functions interact with EC2, and EventBridge triggers them at the specified cron schedule.
+
+---
+
+### References
+
+- [AWS Lambda](https://aws.amazon.com/lambda/)
+- [Amazon EventBridge](https://aws.amazon.com/eventbridge/)
+- [IAM Policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html)
+- [EC2 Instances](https://aws.amazon.com/ec2/)
+
+```
