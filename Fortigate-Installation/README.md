@@ -88,3 +88,7 @@ For more information, refer to the [FortiGate Documentation](https://fortinetweb
 ### References
 - [AWS EC2 Documentation](https://aws.amazon.com/ec2/)
 - [FortiGate Documentation](https://docs.fortinet.com/)
+
+
+![image](https://github.com/user-attachments/assets/140509e5-6d99-4d3e-b48c-599cb2f89f54)
+
