@@ -141,4 +141,3 @@ You have successfully set up a proxy configuration in AWS, where the public EC2 
 - [AWS VPC Documentation](https://docs.aws.amazon.com/vpc/latest/userguide/)
 - [AWS EC2 Documentation](https://docs.aws.amazon.com/ec2/)
 - [Nginx Reverse Proxy Setup](https://www.nginx.com/resources/wiki/start/)
-```
