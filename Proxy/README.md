@@ -24,7 +24,7 @@ Before setting up the proxy, ensure that you've followed the [NATting steps](#na
 2. In the **network settings**, select the **VPC** you created earlier and choose the **public subnet**.
 3. Make sure to enable **Auto-assign Public IP** so that the public EC2 instance can be accessed from the internet.
 
-   ![Launch Public EC2 Instance](https://github.com/user-attachments/assets/a9bf12bd-3d8a-4e36-ae97-c50bef90e526)
+![image](https://github.com/user-attachments/assets/23ac37fa-0e40-407f-ac75-c01c96b16936)
 
 ---
 
@@ -33,7 +33,7 @@ Before setting up the proxy, ensure that you've followed the [NATting steps](#na
 1. Launch another EC2 instance, but this time choose the **private subnet**.
 2. In the **network settings**, ensure **Auto-assign Public IP** is disabled, as this instance will not have direct internet access.
 
-   ![Launch Private EC2 Instance](https://github.com/user-attachments/assets/9a90ecb8-d466-414d-aced-6f2045f4e3f1)
+![image](https://github.com/user-attachments/assets/ccd34e90-b2c3-4ebd-b73f-33fc9872bc28)
 
 ---
 
@@ -42,7 +42,7 @@ Before setting up the proxy, ensure that you've followed the [NATting steps](#na
 1. Copy the **public IP** of your public EC2 instance.
 2. Open **MobaXterm** (or any preferred SSH client) and connect using the **public IP** of the instance and the **key pair** you selected during launch.
 
-   ![Connect to Public EC2 Instance](https://github.com/user-attachments/assets/a65397bc-b84e-4f7b-9c3b-c93cc133c165)
+![image](https://github.com/user-attachments/assets/d53236b9-26e8-4ad9-b7ed-0e14b2ba89e6)
 
 ---
 
@@ -50,7 +50,7 @@ Before setting up the proxy, ensure that you've followed the [NATting steps](#na
 
 1. Ensure the correct **key pair** file is uploaded to your SSH client to authenticate the connection.
 
-   ![Upload SSH Key](https://github.com/user-attachments/assets/9f0f0083-69b6-45a8-b784-c5d2e9530c04)
+![image](https://github.com/user-attachments/assets/0aa3ab03-0cb1-4026-98eb-4db0cef20de6)
 
 ---
 
@@ -60,7 +60,7 @@ Before setting up the proxy, ensure that you've followed the [NATting steps](#na
 
 2. Use SSH to connect to the **private EC2 instance** by entering its **private IP**.
 
-   ![Change Permissions](https://github.com/user-attachments/assets/be083ceb-e801-4b69-94fe-d97b30716701)
+![image](https://github.com/user-attachments/assets/9af159ef-715b-428d-979d-4102c7c818f4)
 
 ---
 
@@ -68,7 +68,7 @@ Before setting up the proxy, ensure that you've followed the [NATting steps](#na
 
 1. Once logged into the private EC2 instance, you can configure it to access the internet via the NAT setup.
 
-   ![Login to Private Instance](https://github.com/user-attachments/assets/ea20b781-0de8-437a-a4c1-5439294085f7)
+![image](https://github.com/user-attachments/assets/8c7265e5-9bbf-448e-bc92-67324a650bd1)
 
 ---
 
@@ -101,7 +101,7 @@ vim /etc/nginx/nginx.conf
 
 2. Modify the **nginx.conf** file to point to the private instance (details on configuration are beyond this guide, but it should be a basic reverse proxy configuration).
 
-   ![Nginx Configuration](https://github.com/user-attachments/assets/81f07963-8b3f-4538-bcda-8ca42fae6b1e)
+![image](https://github.com/user-attachments/assets/7623ff86-a9ab-4712-93b2-79a622929401)
 
 3. Start **Nginx**:
 
@@ -116,7 +116,7 @@ systemctl start nginx
 1. Open a web browser and paste the **public IP** of the public EC2 instance.
 2. You should now be able to access the application running on the private EC2 instance through the public EC2 instance as a proxy.
 
-   ![Test Proxy](https://github.com/user-attachments/assets/f79959b3-e4b8-4909-9bc6-aa62c3a9f789)
+![image](https://github.com/user-attachments/assets/a0b433ab-aeec-4689-8c4a-5e68c98232a6)
 
 ---
 
