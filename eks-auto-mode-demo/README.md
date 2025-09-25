@@ -1,128 +1,60 @@
-# Amazon EKS Auto Mode: A Practical Demonstration
+Hello\! Great job on getting all the tools set up. Here is the complete `README.md` file for your practical demonstration, ready for you to copy and use.
+
+## **Amazon EKS Auto Mode: Cost-Efficient Scaling Demonstration**
+
+This guide provides a step-by-step practical demonstration of how to provision an Amazon EKS cluster in **Auto Mode** and showcase its automatic scaling and cost-efficiency using Karpenter.
+
 -----
 
-### 1\. Practical Demonstration: README.md File
+### **Part 1: AWS Console Setup**
 
-This guide will walk you through setting up an Amazon EKS Auto Mode cluster, deploying a sample application to see how it scales, and then cleaning up all the resources.
+1.  Log in to the **AWS Console** and navigate to the **Elastic Kubernetes Service (EKS)**.
+2.  Click on **`Create cluster`** and select the **`Quick configuration`** tab.
+3.  Choose **`Auto Mode`** for your compute configuration. EKS Auto Mode handles all infrastructure management, including provisioning, scaling, and patching.
+4.  **Create IAM Roles**: If you don't have them already, click the links to create the necessary IAM roles for the Cluster and Nodes. This is a one-time activity.
+5.  **Finish Creation**: After selecting the roles, give your cluster a name and click **`Create`**. The process will take a few minutes.
 
-#### 1.1 AWS Console Steps
+-----
 
-Follow these steps to create your EKS Auto Mode cluster and the necessary IAM roles.
+### **Part 2: Local Environment Setup**
 
-1.  **Log in to the AWS Management Console**: Navigate to the **Elastic Kubernetes Service (EKS)** service.
-2.  **Create an IAM Cluster Role**:
-      * In the EKS console, click **Add cluster** -\> **Create**.
-      * On the Configure cluster page, under **Cluster IAM role**, click the **Create recommended role** button. This will open a new tab in the IAM console.
-      * The role creation wizard will pre-populate the necessary settings. Confirm that **EKS - Auto Cluster** is selected and click **Next**.
-      * Review the permissions, click **Next**, give the role a name (e.g., `EKS-AutoMode-Cluster-Role`), and click **Create role**.
-      * Go back to your EKS console tab and click the refresh button next to the role dropdown. Select the newly created role.
-3.  **Create an IAM Node Role**:
-      * Similarly, under **Auto Mode Compute**, find the **Node IAM role** field and click **Create recommended role**.
-      * In the new IAM tab, the wizard will pre-populate the settings. Confirm that **EKS - Auto Node** is selected and click **Next**.
-      * Review the permissions, click **Next**, give the role a name (e.g., `EKS-AutoMode-Node-Role`), and click **Create role**.
-      * Return to your EKS console tab and select the new node role.
-4.  **Create the EKS Auto Mode Cluster**:
-      * Back on the EKS cluster creation page, select **Use EKS Auto Mode**.
-      * Give your cluster a name and choose the desired Kubernetes version.
-      * Click **Next** through the remaining screens, accepting the defaults.
-      * Finally, click **Create**. The cluster status will show as "Creating" and will take a few minutes to become "Active."
+You'll need three tools on your computer: **AWS CLI**, **`kubectl`**, and **Helm**. If you have not installed them, follow the instructions below.
 
-#### 1.2 Install AWS CLI and `kubectl`
+1.  **Install the AWS CLI**: Use the official installer for your operating system.
+2.  **Configure the AWS CLI**: Open your terminal and run `aws configure`. Enter your AWS Access Key ID, Secret Access Key, and your preferred region (e.g., `us-west-2`).
+3.  **Install `kubectl`**: Use a package manager like Homebrew on macOS (`brew install kubectl`) or Chocolatey on Windows (`choco install kubernetes-cli`).
+4.  **Install Helm**: Use a package manager like Homebrew on macOS (`brew install helm`) or Chocolatey on Windows (`choco install kubernetes-helm`).
 
-Before interacting with your new cluster, you need to install the necessary command-line tools.
+-----
 
-1.  **Install AWS CLI**: Follow the official AWS documentation for your operating system to install the AWS CLI. You can find instructions for Windows, macOS, and Linux. After installation, configure it with your AWS credentials by running `aws configure`.
-2.  **Install `kubectl`**: You can install `kubectl` from the official Kubernetes documentation or directly from Amazon EKS, which ensures a compatible version.
-      * For example, on Linux:
+### **Part 3: The Demonstration**
+
+1.  **Connect to Your Cluster**: Once the cluster is `Active` in the AWS console, run the following command in your terminal. Replace the placeholders with your cluster name and region.
+    ```bash
+    aws eks update-kubeconfig --name <your-cluster-name> --region <your-region>
+    ```
+2.  **Deploy the Application**: We'll use the OpenTelemetry Demo, which is a complex application that will force the cluster to scale.
+      * First, add the Helm chart repository:
         ```bash
-        curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.24/2023-01-26/bin/linux/amd64/kubectl
-        chmod +x ./kubectl
-        mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
-        echo 'export PATH=$HOME/bin:$PATH' >> ~/.bashrc
+        helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
         ```
-3.  **Configure `kubectl` to connect to your cluster**:
+      * Then, install the application:
+        ```bash
+        helm install my-otel-demo open-telemetry/opentelemetry-demo
+        ```
+3.  **Observe Automatic Scaling**: Run `kubectl get pods -w` to watch as the pods are deployed. You will see many pods in a **`Pending`** state. In the AWS console, you'll see EKS Auto Mode, powered by **Karpenter**, automatically provisioning new nodes to handle this demand.
+4.  **Demonstrate Cost-Efficiency**: To see the cluster scale down, simply uninstall the application.
     ```bash
-    aws eks update-kubeconfig --name <your-cluster-name> --region <your-aws-region>
+    helm uninstall my-otel-demo
     ```
-    Replace `<your-cluster-name>` and `<your-aws-region>` with your cluster's name and region.
-
-#### 1.3 Scale with a Sample Application
-
-Let's deploy an application to test the scaling capabilities of EKS Auto Mode. We will use a simple NGINX deployment with a large number of replicas to force scaling.
-
-1.  **Create a YAML file for the deployment and service**: Save the following content as `nginx-deployment.yaml`.
-    ```yaml
-    apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      name: nginx-scale-test
-      labels:
-        app: nginx-scale-test
-    spec:
-      replicas: 1
-      selector:
-        matchLabels:
-          app: nginx-scale-test
-      template:
-        metadata:
-          labels:
-            app: nginx-scale-test
-        spec:
-          containers:
-          - name: nginx
-            image: nginx:latest
-            ports:
-            - containerPort: 80
-            resources:
-              requests:
-                cpu: "500m"
-    ---
-    apiVersion: v1
-    kind: Service
-    metadata:
-      name: nginx-service
-    spec:
-      selector:
-        app: nginx-scale-test
-      ports:
-        - protocol: TCP
-          port: 80
-          targetPort: 80
-      type: LoadBalancer
-    ```
-2.  **Deploy the application**:
-    ```bash
-    kubectl apply -f nginx-deployment.yaml
-    ```
-3.  **Scale up the deployment to a large number of replicas**: This will trigger EKS Auto Mode (using Karpenter) to provision new nodes.
-    ```bash
-    kubectl scale deployment nginx-scale-test --replicas=50
-    ```
-4.  **Monitor the cluster**:
-      * Run `kubectl get pods -w` to watch the pods being scheduled and started. You will notice that many pods are in a "Pending" state initially.
-      * Run `kubectl get nodes` to see new nodes being provisioned by Karpenter to accommodate the new pods. It may take a few minutes for the new nodes to appear.
-      * You can also check the EKS console under the "Compute" tab to see the new nodes being added to your cluster.
-5.  **Scale down to demonstrate cost efficiency**:
-      * To see the nodes removed, scale the deployment back down to a single replica.
-    <!-- end list -->
-    ```bash
-    kubectl scale deployment nginx-scale-test --replicas=1
-    ```
-      * Wait for the extra pods to terminate, then run `kubectl get nodes -w` to watch the nodes being drained and terminated by Karpenter. This demonstrates how EKS Auto Mode is **cost-effective** by removing unused compute resources.
-
-#### 1.4 Deleting Resources
-
-After your demonstration, it's essential to clean up all the resources to avoid incurring unnecessary costs.
-
-1.  **Delete the application deployment**: This will trigger the downscaling process.
-    ```bash
-    kubectl delete -f nginx-deployment.yaml
-    ```
-2.  **Delete the EKS cluster**:
-      * Go to the **AWS EKS console**.
-      * Select your cluster.
-      * Click the **Delete** button in the top right corner.
-      * Confirm the deletion by typing the cluster name and clicking **Delete**.
-      * AWS will automatically delete the associated VPC, subnets, and other resources. You don't need to manually delete the IAM roles, but it is a good practice to clean them up from the IAM console after you confirm the cluster is fully deleted.
+    Karpenter will detect that the nodes are no longer needed and will automatically terminate them, saving you from paying for unused compute resources.
 
 -----
+
+### **Part 4: Cleaning Up**
+
+1.  **Delete the Cluster**: Navigate back to your EKS cluster in the AWS console and click the **`Delete`** button. Confirm the cluster's name.
+2.  **Delete IAM Roles**: Go to the IAM console and delete the cluster and node roles you created earlier.
+
+<br>
+Now that you have the complete `README.md` file, would you like me to walk you through the final steps to clean up all the resources you&#39;ve created to avoid any unnecessary costs?
