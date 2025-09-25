@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: aamantamboli/nginx
+          image: nginx:latest    # official nginx image from Docker Hub
           ports:
             - containerPort: 80
           imagePullPolicy: Always
