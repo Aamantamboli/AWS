@@ -1,5 +1,3 @@
-Hello\! Great job on getting all the tools set up. Here is the complete `README.md` file for your practical demonstration, ready for you to copy and use.
-
 ## **Amazon EKS Auto Mode: Cost-Efficient Scaling Demonstration**
 
 This guide provides a step-by-step practical demonstration of how to provision an Amazon EKS cluster in **Auto Mode** and showcase its automatic scaling and cost-efficiency using Karpenter.
